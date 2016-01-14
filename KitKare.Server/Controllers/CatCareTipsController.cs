@@ -1,14 +1,14 @@
 ﻿namespace KitKare.Server.Controllers
 {
+    using System;
+    using System.Linq;
+    using System.Web.Http;
+
+    using AutoMapper.QueryableExtensions;
+
+    using KitKare.Server.ViewModels;
     using KitKare.Data.Models;
     using KitKare.Data.Repositories;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Web;
-    using AutoMapper.QueryableExtensions;
-    using KitKare.Server.ViewModels;
-    using System.Web.Http;
 
     [RoutePrefix("api/CatCareTips")]
     public class CatCareTipsController : ApiController
@@ -26,7 +26,8 @@
         {
             var tips = this.tips
                 .All()
-                .ProjectTo<CatCareTipViewModel>();
+                .ProjectTo<CatCareTipViewModel>()
+                .ToList();
 
             return this.Ok(tips);
         }

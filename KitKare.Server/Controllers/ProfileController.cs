@@ -1,33 +1,60 @@
 ﻿namespace KitKare.Server.Controllers
 {
+    using Data.Models;
+    using Data.Repositories;
+    using System;
+    using System.Linq;
+    using System.IO;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Web.Http;
 
-    using KitKare.Server.Common.Streaming;
-    using Newtonsoft.Json;
-    using System.Text;
-    using System.Web;
-    using System.IO;
-    using System;
-
+    using AutoMapper.QueryableExtensions;
+    using ViewModels;
+    [Authorize]
     [RoutePrefix("api/Profile")]
     public class ProfileController : ApiController
     {
-        [Route("GetVideo")]
-        [HttpGet]
-        public HttpResponseMessage Get()
+        private IRepository<User> users;
+        private IRepository<Feeding> feedings;
+
+        private string userId;
+
+        public ProfileController(IRepository<User> users, IRepository<Feeding> feedings)
         {
-            var mock = new byte[2];
+            this.users = users;
+            this.feedings = feedings;
 
-            var video = new VideoStream(mock);
+            this.userId = this.users
+                .All()
+                .Where(x => x.UserName == this.User.Identity.Name)
+                .FirstOrDefault()
+                .Id;
+        }
 
-            var response = Request.CreateResponse();
-            var header = new MediaTypeHeaderValue("video/avi");
-            var streamContent = new PushStreamContent((Action<Stream, HttpContent, System.Net.TransportContext>)video.WriteToStream, header);
-            response.Content = streamContent;            
+        [HttpGet]
+        [Route("GetFeedings")]
+        public IHttpActionResult GetFeedings()
+        {
+            var feedings = this.feedings
+                .All()
+                .Where(x => x.UserId == this.userId)
+                .ToList();
 
-            return response;
+            return this.Ok(feedings);
+        }
+
+        [HttpGet]
+        [Route("GetProfile")]
+        public IHttpActionResult GetProfile()
+        {
+            var profile = this.users
+                .All()
+                .Where(x => x.Id == this.userId)
+                .ProjectTo<ProfileViewModel>()
+                .FirstOrDefault();
+
+            return this.Ok(profile);
         }
     }
 }

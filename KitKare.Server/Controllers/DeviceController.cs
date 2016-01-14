@@ -1,33 +1,56 @@
-﻿using KitKare.Data.Models;
-using KitKare.Data.Repositories;
-using KitKare.Server.Common.Streaming;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Web;
-using System.Web.Http;
-
-namespace KitKare.Server.Controllers
+﻿namespace KitKare.Server.Controllers
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Web.Http;
+
+    using KitKare.Data.Models;
+    using KitKare.Data.Repositories;
+    using KitKare.Server.Common.Streaming;
+
+    [Authorize]
     [RoutePrefix("api/Device")]
     public class DeviceController : ApiController
     {
         private const string TeleduinoKey = "FFCC09A911CC4D6B8AF8E8A0941E1F87";
 
         private IRepository<Video> videos;
+        private IRepository<User> users;
+        private IRepository<Feeding> feedings;
 
-        public DeviceController(IRepository<Video> videos)
+        private string userId;
+
+        public DeviceController(IRepository<Video> videos, IRepository<User> users, IRepository<Feeding> feedings)
         {
+            this.users = users;
             this.videos = videos;
+            this.feedings = feedings;
+
+            this.userId = this.users
+                .All()
+                .Where(x => x.UserName == this.User.Identity.Name)
+                .FirstOrDefault()
+                .Id;
         }
         
         [Route("GiveFood")]
         [HttpGet]
         public IHttpActionResult GiveFood()
         {
+            // TODO: make api call to teleduino service
+            var feeding = new Feeding
+            {
+                Quantity = 200,
+                Time = DateTime.Now,
+                UserId = this.userId
+            };
+
+            this.feedings.Add(feeding);
+            this.feedings.SaveChanges();
+
             return this.Ok();
         }
 
@@ -35,6 +58,8 @@ namespace KitKare.Server.Controllers
         [HttpGet]
         public IHttpActionResult GiveWater()
         {
+            // TODO: make api call to teleduino service
+
             return this.Ok();
         }
 
@@ -42,6 +67,8 @@ namespace KitKare.Server.Controllers
         [HttpGet]
         public IHttpActionResult TurnLightsOn()
         {
+            // TODO: make api call to teleduino service
+
             return this.Ok();
         }
 
@@ -49,6 +76,8 @@ namespace KitKare.Server.Controllers
         [HttpGet]
         public IHttpActionResult TurnLightsOff()
         {
+            // TODO: make api call to teleduino service
+
             return this.Ok();
         }
         

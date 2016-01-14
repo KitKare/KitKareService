@@ -5,8 +5,8 @@
 
     public class ProfileViewModel : IMapFrom<User>
     {
-        public string Email { get; set; }
-
         public string CatName { get; set; }
+
+        public string VetPhone { get; set; }
     }
 }

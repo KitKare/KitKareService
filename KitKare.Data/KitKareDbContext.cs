@@ -23,6 +23,10 @@ namespace KitKare.Data
 
         public virtual DbSet<Video> Videos { get; set; }
 
+        public virtual DbSet<Feeding> GivenFoods { get; set; }
+
+        public virtual DbSet<VetCheck> VetChecks { get; set; }
+
         public static KitKareDbContext Create()
         {
             return new KitKareDbContext();
