@@ -33,7 +33,7 @@
                 .All()
                 .Where(x => x.UserName == this.User.Identity.Name)
                 .FirstOrDefault()
-                .Id;
+                ?.Id;
         }
         
         [Route("GiveFood")]
