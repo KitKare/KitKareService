@@ -23,9 +23,16 @@ namespace KitKare.Server.Controllers
         // GET api/values
         public IEnumerable<string> Get()
         {
-            var user = this.users.All().ProjectTo<ProfileViewModel>().FirstOrDefault();
+            try
+            {
+                var user = this.users.All().ProjectTo<ProfileViewModel>().FirstOrDefault();
+                return new string[] { "value1", "value2" };
 
-            return new string[] { "value1", "value2" };
+            }
+            catch (Exception e)
+            {
+                return new string[] { e.Message };
+            }
         }
 
         // GET api/values/5
