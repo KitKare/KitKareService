@@ -85,16 +85,25 @@
         [HttpGet]
         public HttpResponseMessage TurnCameraOn()
         {
-            var video = this.videos.All().FirstOrDefault();
+            try
+            {
+                var video = this.videos.All().FirstOrDefault();
 
-            var videoStream = new VideoStream(video.Data);
+                var videoStream = new VideoStream(video.Data);
 
-            var response = Request.CreateResponse();
-            var header = new MediaTypeHeaderValue("video/avi");
-            var streamContent = new PushStreamContent((Action<Stream, HttpContent, System.Net.TransportContext>)videoStream.WriteToStream, header);
-            response.Content = streamContent;
+                var response = Request.CreateResponse();
+                var header = new MediaTypeHeaderValue("video/avi");
+                var streamContent = new PushStreamContent((Action<Stream, HttpContent, System.Net.TransportContext>)videoStream.WriteToStream, header);
+                response.Content = streamContent;
 
-            return response;
+                return response;
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest, e.Message);
+
+            }
+
         }
 
         [Route("TurnCameraOff")]
