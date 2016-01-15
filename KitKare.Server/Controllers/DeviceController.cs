@@ -11,7 +11,7 @@
     using KitKare.Data.Repositories;
     using KitKare.Server.Common.Streaming;
 
-    [Authorize]
+   // [Authorize]
     [RoutePrefix("api/Device")]
     public class DeviceController : ApiController
     {

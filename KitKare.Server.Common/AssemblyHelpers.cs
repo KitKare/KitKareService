@@ -15,7 +15,7 @@ namespace KitKare.Server.Common
             var assemblyLocation = assembly.CodeBase;
             var location = new UriBuilder(assemblyLocation);
             var path = Uri.UnescapeDataString(location.Path);
-            path = path.Substring(0, path.IndexOf("KitKare"));
+            path = path.Substring(0, path.IndexOf("KitKare.Server"));
             var directory = Path.GetDirectoryName(path);
             return directory;
         }

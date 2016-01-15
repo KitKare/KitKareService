@@ -31,7 +31,7 @@ namespace KitKare.Data.Migrations
             this.SeedRoles(context);
             this.SeedUsers(context);
             this.SeedTips(context);
-         //   this.SeedVideo(context);
+            this.SeedVideo(context);
         }
 
         private void SeedVideo(KitKareDbContext context)
@@ -60,7 +60,7 @@ namespace KitKare.Data.Migrations
         private byte[] GetVideoData(string videoFileName)
         {
             var directory = AssemblyHelpers.GetDirectoryForAssembly(Assembly.GetExecutingAssembly());
-            var file = File.ReadAllBytes(directory + "/KitKareService/KitKare.Data/Migrations/Videos/" + videoFileName);
+            var file = File.ReadAllBytes(directory + "/KitKare.Server/Assets/" + videoFileName);
 
             return file;
         }
