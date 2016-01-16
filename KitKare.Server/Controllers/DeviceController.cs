@@ -10,12 +10,13 @@
     using KitKare.Data.Models;
     using KitKare.Data.Repositories;
     using KitKare.Server.Common.Streaming;
-
-   // [Authorize]
+    using System.Net;
+    // [Authorize]
     [RoutePrefix("api/Device")]
     public class DeviceController : ApiController
     {
-        private const string TeleduinoKey = "FFCC09A911CC4D6B8AF8E8A0941E1F87";
+        private const int ServoPin = 9;
+        private const string TeleduinoKey = "2BAAB610021E3E7DFAC34C532F12A540";
 
         private IRepository<Video> videos;
         private IRepository<User> users;
@@ -40,7 +41,24 @@
         [HttpGet]
         public IHttpActionResult GiveFood()
         {
-            // TODO: make api call to teleduino service
+            var webClient = new WebClient();
+
+            // Define servo
+            webClient.DownloadString(string.Format(
+                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=defineServo&servo=0&pin={1}", TeleduinoKey, ServoPin));
+
+            // Set initial servo position
+            webClient.DownloadString(
+                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=0", TeleduinoKey));
+
+            // Open door
+            webClient.DownloadString(
+                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=90", TeleduinoKey));
+
+            // Close door
+            webClient.DownloadString(
+                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=0", TeleduinoKey));
+            
             var feeding = new Feeding
             {
                 Quantity = 200,
@@ -49,9 +67,17 @@
             };
 
             this.feedings.Add(feeding);
-            this.feedings.SaveChanges();
 
-            return this.Ok();
+            try
+            {
+                this.feedings.SaveChanges();
+
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                return this.BadRequest(e.Message);
+            }
         }
 
         [Route("GiveWater")]
