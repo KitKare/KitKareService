@@ -11,7 +11,7 @@
     using KitKare.Data.Repositories;
     using KitKare.Server.Common.Streaming;
     using System.Net;
-    // [Authorize]
+    using Newtonsoft.Json;    // [Authorize]
     [RoutePrefix("api/Device")]
     public class DeviceController : ApiController
     {
@@ -80,8 +80,8 @@
             }
         }
 
-        [Route("GiveWater")]
         [HttpGet]
+        [Route("GiveWater")]
         public IHttpActionResult GiveWater()
         {
             // TODO: make api call to teleduino service
@@ -89,26 +89,40 @@
             return this.Ok();
         }
 
-        [Route("TurnLightsOn")]
         [HttpGet]
+        [Route("TurnLightsOn")]
         public IHttpActionResult TurnLightsOn()
         {
-            // TODO: make api call to teleduino service
+            var webClient = new WebClient();
+            
+            // Turn lights on
+            var responseLight1 = webClient.DownloadString(string.Format(
+                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=1&expire_time=0&save=1", TeleduinoKey, 7));
 
+            webClient.DownloadString(string.Format(
+                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=1&expire_time=0&save=1", TeleduinoKey, 6));
+            
             return this.Ok();
         }
 
-        [Route("TurnLightsOff")]
         [HttpGet]
+        [Route("TurnLightsOff")]
         public IHttpActionResult TurnLightsOff()
         {
-            // TODO: make api call to teleduino service
+            var webClient = new WebClient();
+
+            // Turn lights off
+            webClient.DownloadString(string.Format(
+                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", TeleduinoKey, 7));
+
+            webClient.DownloadString(string.Format(
+                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", TeleduinoKey, 6));
 
             return this.Ok();
         }
         
-        [Route("TurnCameraOn")]
         [HttpGet]
+        [Route("TurnCameraOn")]
         public HttpResponseMessage TurnCameraOn()
         {
             try
@@ -127,13 +141,11 @@
             catch (Exception e)
             {
                 return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest, e.Message);
-
             }
-
         }
 
-        [Route("TurnCameraOff")]
         [HttpGet]
+        [Route("TurnCameraOff")]
         public IHttpActionResult TurnCameraOff()
         {
 
