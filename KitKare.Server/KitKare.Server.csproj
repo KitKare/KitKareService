@@ -260,7 +260,7 @@
     <Compile Include="ViewModels\ProfileViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\video.mp4" />
+    <Content Include="Assets\catvideo.mp4" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="ApplicationInsights.config">
