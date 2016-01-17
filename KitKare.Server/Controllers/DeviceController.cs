@@ -11,9 +11,8 @@
     using KitKare.Data.Repositories;
     using KitKare.Server.Common.Streaming;
     using System.Net;
-    using Newtonsoft.Json;    
     
-    [Authorize]
+    
     [RoutePrefix("api/Device")]
     public class DeviceController : ApiController
     {
@@ -40,8 +39,8 @@
                 ?.Id;
         }
         
-        [Route("GiveFood")]
         [HttpGet]
+        [Route("GiveFood")]
         public IHttpActionResult GiveFood()
         {
             var webClient = new WebClient();            
@@ -82,6 +81,7 @@
             }
         }
 
+        [Authorize]
         [HttpGet]
         [Route("LightsAreOn")]
         public IHttpActionResult LightsAreOn()
@@ -89,7 +89,7 @@
             var lightsAreOn = this.users
                 .All()
                 .Where(x => x.Id == this.userId)
-                .Select(x => new { LightsAreOn = x.LightsAreOn })
+                .Select(x => new { x.LightsAreOn })
                 .FirstOrDefault();
 
             return this.Ok(lightsAreOn);
@@ -104,6 +104,7 @@
             return this.Ok();
         }
 
+        [Authorize]
         [HttpGet]
         [Route("TurnLightsOn")]
         public IHttpActionResult TurnLightsOn()
@@ -118,6 +119,14 @@
                     TeleduinoKey, 
                     LightsPin));
 
+                var currentUser = this.users
+                    .All()
+                    .Where(x => x.Id == this.userId)
+                    .FirstOrDefault();
+
+                currentUser.LightsAreOn = true;
+                this.users.SaveChanges();
+
                 return this.Ok();
             }
             catch (Exception e)
@@ -126,6 +135,7 @@
             }            
         }
 
+        [Authorize]
         [HttpGet]
         [Route("TurnLightsOff")]
         public IHttpActionResult TurnLightsOff()
@@ -139,6 +149,14 @@
                     "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", 
                     TeleduinoKey, 
                     LightsPin));
+
+                var currentUser = this.users
+                    .All()
+                    .Where(x => x.Id == this.userId)
+                    .FirstOrDefault();
+
+                currentUser.LightsAreOn = false;
+                this.users.SaveChanges();
 
                 return this.Ok();
             }
@@ -160,7 +178,7 @@
 
                 var response = Request.CreateResponse();
                 var header = new MediaTypeHeaderValue("video/avi");
-                var streamContent = new PushStreamContent((Action<Stream, HttpContent, System.Net.TransportContext>)videoStream.WriteToStream, header);
+                var streamContent = new PushStreamContent((Action<Stream, HttpContent, TransportContext>)videoStream.WriteToStream, header);
                 response.Content = streamContent;
 
                 return response;
