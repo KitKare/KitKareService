@@ -11,25 +11,16 @@
 
     using AutoMapper.QueryableExtensions;
     using ViewModels;
-    [Authorize]
+    
     [RoutePrefix("api/Profile")]
-    public class ProfileController : ApiController
+    public class ProfileController : BaseAuthorizationController
     {
-        private IRepository<User> users;
         private IRepository<Feeding> feedings;
 
-        private string userId;
-
         public ProfileController(IRepository<User> users, IRepository<Feeding> feedings)
+            : base(users)
         {
-            this.users = users;
             this.feedings = feedings;
-
-            this.userId = this.users
-                .All()
-                .Where(x => x.UserName == this.User.Identity.Name)
-                .FirstOrDefault()
-                .Id;
         }
 
         [HttpGet]
@@ -38,7 +29,7 @@
         {
             var feedings = this.feedings
                 .All()
-                .Where(x => x.UserId == this.userId)
+                .Where(x => x.UserId == this.CurrentUserId)
                 .ToList();
 
             return this.Ok(feedings);
@@ -50,7 +41,7 @@
         {
             var profile = this.users
                 .All()
-                .Where(x => x.Id == this.userId)
+                .Where(x => x.Id == this.CurrentUserId)
                 .ProjectTo<ProfileViewModel>()
                 .FirstOrDefault();
 

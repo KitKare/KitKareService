@@ -241,6 +241,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseAuthorizationController.cs" />
     <Compile Include="Controllers\CatCareTipsController.cs" />
     <Compile Include="Controllers\DeviceController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />

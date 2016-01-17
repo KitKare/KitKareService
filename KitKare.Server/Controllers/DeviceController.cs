@@ -14,36 +14,27 @@
     
     
     [RoutePrefix("api/Device")]
-    public class DeviceController : ApiController
+    public class DeviceController : BaseAuthorizationController
     {
         private const int ServoPin = 9;
         private const int LightsPin = 7;
         private const string TeleduinoKey = "2BAAB610021E3E7DFAC34C532F12A540";
 
         private IRepository<Video> videos;
-        private IRepository<User> users;
         private IRepository<Feeding> feedings;
 
-        private string userId;
-
         public DeviceController(IRepository<Video> videos, IRepository<User> users, IRepository<Feeding> feedings)
+            : base(users)
         {
-            this.users = users;
             this.videos = videos;
             this.feedings = feedings;
-
-            this.userId = this.users
-                .All()
-                .Where(x => x.UserName == this.User.Identity.Name)
-                .FirstOrDefault()
-                ?.Id;
         }
         
         [HttpGet]
         [Route("GiveFood")]
         public IHttpActionResult GiveFood()
         {
-            var webClient = new WebClient();            
+            var webClient = new WebClient();
 
             try
             {
@@ -67,7 +58,7 @@
                 {
                     Quantity = 200,
                     Time = DateTime.Now,
-                    UserId = this.userId
+                    UserId = this.CurrentUserId
                 };
 
                 this.feedings.Add(feeding);
@@ -80,15 +71,14 @@
                 return this.BadRequest(e.Message);
             }
         }
-
-        [Authorize]
+        
         [HttpGet]
         [Route("LightsAreOn")]
         public IHttpActionResult LightsAreOn()
         {
             var lightsAreOn = this.users
                 .All()
-                .Where(x => x.Id == this.userId)
+                .Where(x => x.Id == this.CurrentUserId)
                 .Select(x => new { x.LightsAreOn })
                 .FirstOrDefault();
 
@@ -103,8 +93,7 @@
 
             return this.Ok();
         }
-
-        [Authorize]
+        
         [HttpGet]
         [Route("TurnLightsOn")]
         public IHttpActionResult TurnLightsOn()
@@ -121,7 +110,7 @@
 
                 var currentUser = this.users
                     .All()
-                    .Where(x => x.Id == this.userId)
+                    .Where(x => x.Id == this.CurrentUserId)
                     .FirstOrDefault();
 
                 currentUser.LightsAreOn = true;
@@ -132,10 +121,9 @@
             catch (Exception e)
             {
                 return this.BadRequest(e.Message);
-            }            
+            }
         }
-
-        [Authorize]
+        
         [HttpGet]
         [Route("TurnLightsOff")]
         public IHttpActionResult TurnLightsOff()
@@ -152,7 +140,7 @@
 
                 var currentUser = this.users
                     .All()
-                    .Where(x => x.Id == this.userId)
+                    .Where(x => x.Id == this.CurrentUserId)
                     .FirstOrDefault();
 
                 currentUser.LightsAreOn = false;
