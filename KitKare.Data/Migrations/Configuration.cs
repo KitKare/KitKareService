@@ -41,7 +41,7 @@ namespace KitKare.Data.Migrations
                 return;
             }
 
-            var videoData = this.GetVideoData("video.mp4");
+            var videoData = this.GetVideoData("catvideo.mp4");
 
             var video = new Video
             {
