@@ -41,35 +41,35 @@
         [HttpGet]
         public IHttpActionResult GiveFood()
         {
-            var webClient = new WebClient();
-
-            // Define servo
-            webClient.DownloadString(string.Format(
-                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=defineServo&servo=0&pin={1}", TeleduinoKey, ServoPin));
-
-            // Set initial servo position
-            webClient.DownloadString(
-                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=25", TeleduinoKey));
-
-            // Open door
-            webClient.DownloadString(
-                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=70", TeleduinoKey));
-
-            // Close door
-            webClient.DownloadString(
-                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=25", TeleduinoKey));
-            
-            var feeding = new Feeding
-            {
-                Quantity = 200,
-                Time = DateTime.Now,
-                UserId = this.userId
-            };
-
-            this.feedings.Add(feeding);
+            var webClient = new WebClient();            
 
             try
             {
+                // Define servo
+                webClient.DownloadString(string.Format(
+                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=defineServo&servo=0&pin={1}", TeleduinoKey, ServoPin));
+
+                // Set initial servo position
+                webClient.DownloadString(
+                    string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=25", TeleduinoKey));
+
+                // Open door
+                webClient.DownloadString(
+                    string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=70", TeleduinoKey));
+
+                // Close door
+                webClient.DownloadString(
+                    string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=25", TeleduinoKey));
+
+                var feeding = new Feeding
+                {
+                    Quantity = 200,
+                    Time = DateTime.Now,
+                    UserId = this.userId
+                };
+
+                this.feedings.Add(feeding);
+
                 this.feedings.SaveChanges();
 
                 return this.Ok();
@@ -107,15 +107,22 @@
         public IHttpActionResult TurnLightsOn()
         {
             var webClient = new WebClient();
-            
-            // Turn lights on
-            var responseLight1 = webClient.DownloadString(string.Format(
-                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=1&expire_time=0&save=1", TeleduinoKey, 7));
 
-            webClient.DownloadString(string.Format(
-                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=1&expire_time=0&save=1", TeleduinoKey, 6));
-            
-            return this.Ok();
+            try
+            {
+                // Turn lights on
+                var responseLight1 = webClient.DownloadString(string.Format(
+                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=1&expire_time=0&save=1", TeleduinoKey, 7));
+
+                webClient.DownloadString(string.Format(
+                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=1&expire_time=0&save=1", TeleduinoKey, 6));
+
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                return this.BadRequest(e.Message);
+            }            
         }
 
         [HttpGet]
@@ -124,14 +131,21 @@
         {
             var webClient = new WebClient();
 
-            // Turn lights off
-            webClient.DownloadString(string.Format(
-                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", TeleduinoKey, 7));
+            try
+            {
+                // Turn lights off
+                webClient.DownloadString(string.Format(
+                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", TeleduinoKey, 7));
 
-            webClient.DownloadString(string.Format(
-                "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", TeleduinoKey, 6));
+                webClient.DownloadString(string.Format(
+                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", TeleduinoKey, 6));
 
-            return this.Ok();
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                return this.BadRequest(e.Message);
+            }
         }
         
         [HttpGet]
