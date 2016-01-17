@@ -49,15 +49,15 @@
 
             // Set initial servo position
             webClient.DownloadString(
-                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=0", TeleduinoKey));
+                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=25", TeleduinoKey));
 
             // Open door
             webClient.DownloadString(
-                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=90", TeleduinoKey));
+                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=70", TeleduinoKey));
 
             // Close door
             webClient.DownloadString(
-                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=0", TeleduinoKey));
+                string.Format("https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setServo&servo=0&position=25", TeleduinoKey));
             
             var feeding = new Feeding
             {
@@ -78,6 +78,19 @@
             {
                 return this.BadRequest(e.Message);
             }
+        }
+
+        [HttpGet]
+        [Route("LightsAreOn")]
+        public IHttpActionResult LightsAreOn()
+        {
+            var lightsAreOn = this.users
+                .All()
+                .Where(x => x.Id == this.userId)
+                .Select(x => new { LightsAreOn = x.LightsAreOn })
+                .FirstOrDefault();
+
+            return this.Ok(lightsAreOn);
         }
 
         [HttpGet]

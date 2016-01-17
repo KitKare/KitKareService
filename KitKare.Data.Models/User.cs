@@ -21,6 +21,8 @@
 
         public string VetPhone { get; set; }
 
+        public bool LightsAreOn { get; set; }
+
         public virtual ICollection<Feeding> Feedings { get; set; }
 
         public virtual ICollection<VetCheck> VetChecks { get; set; }
