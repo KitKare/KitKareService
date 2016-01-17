@@ -11,11 +11,14 @@
     using KitKare.Data.Repositories;
     using KitKare.Server.Common.Streaming;
     using System.Net;
-    using Newtonsoft.Json;    // [Authorize]
+    using Newtonsoft.Json;    
+    
+    [Authorize]
     [RoutePrefix("api/Device")]
     public class DeviceController : ApiController
     {
         private const int ServoPin = 9;
+        private const int LightsPin = 7;
         private const string TeleduinoKey = "2BAAB610021E3E7DFAC34C532F12A540";
 
         private IRepository<Video> videos;
@@ -69,7 +72,6 @@
                 };
 
                 this.feedings.Add(feeding);
-
                 this.feedings.SaveChanges();
 
                 return this.Ok();
@@ -112,10 +114,9 @@
             {
                 // Turn lights on
                 var responseLight1 = webClient.DownloadString(string.Format(
-                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=1&expire_time=0&save=1", TeleduinoKey, 7));
-
-                webClient.DownloadString(string.Format(
-                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=1&expire_time=0&save=1", TeleduinoKey, 6));
+                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=1&expire_time=0&save=1", 
+                    TeleduinoKey, 
+                    LightsPin));
 
                 return this.Ok();
             }
@@ -135,10 +136,9 @@
             {
                 // Turn lights off
                 webClient.DownloadString(string.Format(
-                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", TeleduinoKey, 7));
-
-                webClient.DownloadString(string.Format(
-                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", TeleduinoKey, 6));
+                    "https://us01.proxy.teleduino.org/api/1.0/328.php?k={0}&r=setDigitalOutput&pin={1}&output=0&expire_time=0&save=1", 
+                    TeleduinoKey, 
+                    LightsPin));
 
                 return this.Ok();
             }
@@ -167,7 +167,7 @@
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest, e.Message);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, e.Message);
             }
         }
 
