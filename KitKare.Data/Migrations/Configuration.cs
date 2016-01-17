@@ -41,10 +41,6 @@ namespace KitKare.Data.Migrations
                 return;
             }
 
-         //   var mappedPath = System.Web.Hosting.HostingEnvironment.MapPath("~/video.mp4");
-
-            
-
             var videoData = this.GetVideoData("video.mp4");
 
             var video = new Video
