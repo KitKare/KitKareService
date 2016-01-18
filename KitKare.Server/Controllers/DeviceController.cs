@@ -155,6 +155,7 @@
             }
         }
         
+        [AllowAnonymous]
         [HttpGet]
         [Route("TurnCameraOn")]
         public HttpResponseMessage TurnCameraOn()
