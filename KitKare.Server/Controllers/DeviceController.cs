@@ -16,7 +16,7 @@
     [RoutePrefix("api/Device")]
     public class DeviceController : BaseAuthorizationController
     {
-        private const int ServoPin = 9;
+        private const int ServoPin = 5;
         private const int LightsPin = 7;
         private const string TeleduinoKey = "2BAAB610021E3E7DFAC34C532F12A540";
 
@@ -76,6 +76,7 @@
         [Route("LightsAreOn")]
         public IHttpActionResult LightsAreOn()
         {
+            var a = this.CurrentUserId;
             var lightsAreOn = this.users
                 .All()
                 .Where(x => x.Id == this.CurrentUserId)
